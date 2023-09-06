@@ -1,0 +1,39 @@
+extern C 浅析
+
+1. 用途：在C++中调用C语言文件
+2. C++中有函数重载，会对函数名称做修饰，导致调用C语言的函数链接失败
+3. 利用extern C 可以解决问题
+	3.1 方法1
+		3.1.2 在C++代码中加入 extern "C" void show();  //告诉编译器 show函数用C语言的方式做链接
+	3.2 方法2（推荐）
+		3.2.1 在C语言的头文件中加入6行代码
+			#ifdef __cplusplus
+			extern "C" {
+			#endif
+				...
+				...
+
+			#ifdef __cplusplus   //两个下划线 __ c plus plus
+			}
+			#endif
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+#pragma once
+
+#ifdef __cplusplus	//两个下划线 __ c plus plus
+extern "C" {
+#endif
+
+#include <stdio.h>
+
+	void show();
+	void show1();
+	void show2();
+	void show3();
+
+
+#ifdef __cplusplus
+}
+#endif

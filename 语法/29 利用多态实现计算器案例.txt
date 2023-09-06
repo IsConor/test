@@ -1,0 +1,103 @@
+利用多态实现计算器案例
+
+1.设计抽象计算器类，分别实现加减乘计算，继承于抽象计算器类，重写虚函数
+2.利用多态可以调用不同计算器
+3.多态的好处
+	代码可读性强
+	组织结构清晰
+	扩展性强
+开闭原则：对扩展进行开放，对修改进行关闭
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+using namespace std;
+
+//class Calculate {
+//public:
+//
+//	int getResult(string oper){
+//		if (oper == "+") {
+//			return m_A + m_B;
+//		}
+//		else if (oper == "-") {
+//			return m_A - m_B;
+//		}
+//		else if (oper == "*") {
+//			return m_A * m_B;
+//		}
+//	}
+//
+//	int m_A;
+//	int m_B;
+//};
+//
+//void test01() {
+//	Calculate c;
+//	c.m_A = 10;
+//	c.m_B = 20;
+//	cout << c.getResult("*") << endl;
+//}
+
+//开闭原则
+//对扩展进行开放，对修改进行关闭
+
+//利用多态实现计算器
+
+
+class AbstractCalculator {
+public:
+	virtual int getResult(){
+		return 0;
+	}
+
+	int m_A;
+	int m_B;
+};
+
+//加法
+class AddCalculator:public AbstractCalculator {
+public:
+	virtual int getResult() {
+		return m_A + m_B;
+	}
+};
+
+//减法
+class SubCalculator :public AbstractCalculator {
+public:
+	virtual int getResult() {
+		return m_A - m_B;
+	}
+};
+
+//乘法
+class MulCaculator :public AbstractCalculator {
+public:
+	virtual int getResult() {
+		return m_A * m_B;
+	}
+};
+
+void test01() {
+	AbstractCalculator* caculator = new AddCalculator;
+
+	caculator->m_A = 100;
+	caculator->m_B = 200;
+
+	cout << caculator->getResult() << endl;
+
+	delete caculator;
+	
+}
+
+int main()
+{
+	test01();
+
+
+	return 0;
+}

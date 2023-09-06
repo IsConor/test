@@ -1,0 +1,267 @@
+字符串类的封装
+
+	1.MyString类  实现自定义的字符串类
+	2.属性
+		2.1 char* pString; 维护在堆区开辟的字符串数组
+		2.2 int m_Size;  //字符串长度
+	3.行为
+		3.1 有参构造  MyString(const char* str);
+		3.2 拷贝构造 MyString(const MyString& str);
+		3.3 析构 ~MyString()
+		3.4 重载<<运算符
+		3.5 重载 >> 运算符
+		3.6 重载 = 运算符
+		3.7 重载 [] 运算符  按照索引的位置设置获取字符
+		3.8 重载 + 运算符  字符串拼接
+		3.9 重载 == 运算符 比较两个字符串
+
+-----------------------------------------------------------------------------------------------------------------
+
+						mystring.h
+
+#pragma once
+#include <iostream>
+using namespace std;
+
+class MyString {
+	//左移运算符友元
+	friend ostream& operator<<(ostream& cout, MyString& str);
+	//右移运算符友元
+	friend istream& operator>>(istream& cin, MyString& str);
+public:
+	//有参构造
+	MyString(const char* str);
+
+	//拷贝构造
+	MyString(const MyString& str);
+
+	//重载=运算符
+	MyString& operator=(const char* str);
+	MyString& operator=(const MyString& str);
+
+	//重载[]运算符
+	char& operator[](int num);
+
+	//重载+运算符 -> 返回的是一个值，不需要引用
+	MyString operator+(const char* str);
+	MyString operator+(const MyString& str);
+
+	//重载关系运算符
+	bool operator==(MyString& str);
+	bool operator==(const char* str);
+
+	//析构
+	~MyString();
+
+private:
+	char* pString;  //维护在堆区开辟的数组
+
+	int m_Size;		//字符串长度 不统计\0
+
+};
+---------------------------------------------------------------------------------------------------------------------
+						mystring.cpp
+
+
+#include "mystring.h"
+
+//重载左移运算符
+ostream& operator<<(ostream& cout, MyString& str) {
+	cout << str.pString << " ";
+	cout << str.m_Size;
+	return cout;
+}
+
+//重载右移运算符
+istream& operator>>(istream& cin, MyString& str) {
+	//先清空原来堆区数据
+	if (str.pString != NULL) {
+		delete[]str.pString;
+		str.pString = NULL;
+	}
+
+	char buf[1024];	//开辟临时数组，记录用户输入内容
+	cin >> buf;
+
+	str.pString = new char[strlen(buf) + 1];
+	strcpy(str.pString, buf);
+	str.m_Size = strlen(buf);
+
+	return cin;
+}
+
+//有参构造
+MyString::MyString(const char* str) {
+	this->pString = new char[strlen(str) + 1];
+	strcpy(this->pString, str);
+	this->m_Size = strlen(str);
+}
+
+//拷贝构造
+MyString::MyString(const MyString& str) {
+	cout << "拷贝构造" << endl;
+	this->pString = new char[strlen(str.pString)+1];
+	strcpy(this->pString, str.pString);
+	this->m_Size = str.m_Size;
+}
+
+//重载=运算符
+MyString& MyString::operator=(const char* str) {
+	if (this->pString != NULL) {
+		delete[]this->pString;
+		this->pString = NULL;
+	}
+
+	this->pString = new char[strlen(str) + 1];
+	strcpy(this->pString, str);
+	this->m_Size = strlen(str);
+	return *this;	//返回本体，支持链式编程
+}
+
+
+MyString& MyString::operator=(const MyString& str) {
+	if (this->pString != NULL) {
+		delete[]this->pString;
+		this->pString = NULL;
+	}
+
+	this->pString = new char[strlen(str.pString) + 1];
+	strcpy(this->pString, str.pString);
+	this->m_Size = str.m_Size;
+	return *this;
+}
+
+//重载[]运算符 -> 因为需要支持左值操作 pString[1] = 'a';  所以返回引用
+char& MyString::operator[](int num) { 
+	return this->pString[num];
+}
+
+//重载+运算符 -> 返回的是一个值，不需要引用
+MyString MyString::operator+(const char* str) {
+	//计算开辟空间大小
+	int newSize = this->m_Size + strlen(str) + 1;
+
+	char* temp = new char[newSize];
+
+	memset(temp, 0, newSize); //清空
+
+	strcat(temp, this->pString); //字符串拼接
+	strcat(temp, str);
+
+	MyString newString = temp;
+
+	delete[] temp;	//释放临时创建在堆区的空间
+	return newString;
+}
+
+
+MyString MyString::operator+(const MyString& str) {
+	//计算开辟空间大小
+	int newSize = this->m_Size + strlen(str.pString) + 1;
+
+	char* temp = new char[newSize];
+
+	memset(temp, 0, newSize); //清空
+
+	strcat(temp, this->pString); //字符串拼接
+	strcat(temp, str.pString);
+
+	MyString newString = temp;
+
+	delete[] temp;	//释放临时创建在堆区的空间
+	return newString;
+}
+
+//重载关系运算符
+bool MyString::operator==(MyString& str) {
+	if (this->pString == str.pString && this->m_Size == str.m_Size) {
+		return true;
+	}
+	return false;
+}
+
+bool MyString::operator==(const char* str) {
+	if (strcmp(this->pString, str) == 0) {	//strcmp 判断字符串是否相等
+		return true;
+	}
+	return false;
+}
+
+//析构
+MyString::~MyString() {
+	if (this->pString != NULL) {
+		cout << "析构函数" << endl;
+		delete[]this->pString;
+		this->pString = NULL;
+	}
+}
+-------------------------------------------------------------------------------------------------------------------------------------
+						test.cpp
+
+#include "mystring.h"
+/*字符串类的封装*/
+
+void test01() {
+	MyString str = "abc";
+
+	MyString str2 = str;
+
+	cout << str << endl;
+
+	cout << "重新给str赋值:" << endl;
+
+	cin >> str;
+	cout << "str的新值为:" << str <<endl;
+
+	MyString str3 = str;
+	cout << "str3的值为:" << str3 << endl;
+}
+
+void test02() {
+	//=号运算符赋值  常量和变量
+	MyString str = "abcd";
+
+	MyString str2 = " ";
+	str2 = str;
+	//str2 = "aaa";
+	cout << str << endl;
+	cout << str2 << endl;
+
+	//通过下标访问
+	cout << str[1] << endl;
+
+	//字符串拼接,重载+号运算符
+	MyString str3 = "abc";
+	MyString str4 = "def";
+	MyString str5 = str3 + str4;
+	MyString str6 = str5 + "ghe";
+	cout << str5 << endl;
+	cout << str6 << endl;
+
+	//关系运算符重载
+	if (str5 == str6) {
+		cout << "str5 = str6" << endl;
+	}
+	else {
+		cout << "str5 != str6" << endl;
+	}
+
+	if (str6 == "abcdefghe") {
+		cout << "str6 = abcdefghe" << endl;
+	}
+	else {
+		cout << "不相等" << endl;
+	}
+}
+
+
+int main()
+{
+	//test01();
+	/*int a = 10;
+	cin >> a;
+	cout << "a = " << a << endl;*/
+	test02();
+
+	return 0;
+}

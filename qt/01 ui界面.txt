@@ -1,0 +1,77 @@
+	QT ---- GUI
+	IDE-----集成开发环境
+
+在qt中，界面设计者有两种方式： 1.qt设计师（.ui文件）
+			     2.使用纯代码编写界面 ---工作量大，维护难度高
+
+
+1.安装 qt creater   ----断网-----自动跳过
+2.qt 是一个GUI（图形界面编程），它是由模块组成，模块中包含多个组件
+
+ 模块 ---- 实现某种特定功能的接口，使用模块化来管理
+
+ 组件 ---- 本质就是一个个C++类，这些类实现了某种功能
+
+3.qt项目管理
+	qt项目本质就是应用程序 --- application
+		项目管理文件 ---- .pro
+		界面 --- 自定义界面都有继承于qt中的界面基类
+		.h ----- 类的声明和封装
+		.cpp --- 类的实现 ---- 自定义API接口
+		.ui --- 界面设计-----程序设计者根据需求定制界面
+	main.cpp ----qt应用程序入口，该文件一般比较简洁
+
+
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QMessageBox>
+#include <QtDebug>
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+
+    //在构造函数中，可以来设置界面窗口的标题和固定大小
+    //this->setWindowTitle()
+    this->setFixedSize(this->width(),this->height());//this 当前类的对象 this->width() ---获取窗口的宽度（ui文件的宽度）
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::on_pushButtonlogin_clicked()
+{
+    if(ui->userEdit->text() == "root" && ui->passwdEdit->text() == "123456")
+    {
+        //在QT中不再使用c++的cout来输出，它自己封装一个类
+        qDebug() << "登录成功";
+    }
+    else{
+        //静态成员函数 QMessageBox::information(QWidget* parent,const QString& title,const QString&text,默认参数)
+        //QWidget* parent --- 父窗口，跟C++中继承没有关系，消息盒子在哪一个窗口界面弹出，一般传入this
+        //const QString& title -- 字符串类型 --- 消息盒子的标题
+        //const QString& test --- 字符串类型 --- 消息盒子的文本显示内容 --- const修饰的作用是可以用常量来初始化
+        QMessageBox::information(this, "输入提示", "用户名或者密码错误"); //静态成员函数是可以直接通过类名调用
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

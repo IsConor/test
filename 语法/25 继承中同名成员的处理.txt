@@ -1,0 +1,64 @@
+继承中同名成员的处理
+
+#include <iostream>
+using namespace std;
+
+class Base {
+public:
+	Base() {
+		this->m_A = 10;
+	}
+
+	void func() {
+		cout << "Base中func的调用" << endl;
+	}
+
+	void func(int a) {
+
+	}
+
+	int m_A;
+};
+
+class Son1 :public Base {
+public:
+	Son1() {
+		this->m_A = 20;
+	}
+
+	void func() {
+		cout << "Son1中func的调用" << endl;
+	}
+
+	int m_A;
+};
+
+
+void test01()
+{
+	Son1 s;
+	
+	cout << s.m_A << endl;
+
+	//可以利用作用域 访问父类中的同名成员
+	cout << "Base中的m_A:" << s.Base::m_A << endl;
+}
+
+void test02()
+{
+	Son1 s1;
+	s1.func();
+	//利用作用域调用父类中的同名成员函数
+	s1.Base::func();
+	//当子类重新定义了父类中的同名成员函数，子类的成员函数会隐藏掉父类中所有重载版本的同名成员 可以利用作用域显示指定调用
+	s1.Base::func(10);
+}
+
+
+int main()
+{
+	//test01();
+	test02();
+
+	return 0;
+}

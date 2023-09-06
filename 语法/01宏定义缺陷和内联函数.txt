@@ -1,0 +1,67 @@
+1.设计一个类，求圆的周长，设计一个学生类，可以设置姓名学号，可以查询姓名和学号
+
+2.内联函数
+	2.1 内联函数引出-宏缺陷
+		2.1.1 必须要加括号保证运算的完整性
+		2.1.2 即使加括号，有些运算依然与预期不符
+	2.2 C++提供 内联函数代替宏函数
+	2.3 关键字 inline
+	2.4 在函数声明和实现中同时加关键字 inline才称为内联函数
+	2.5 在成员函数的前面都隐式的加了关键字 inline
+ 	2.6 内联函数有些特殊的情况下，写了关键字inline也不会按照内联函数处理
+		2.6.1 出现循环
+		2.6.2 出现判断
+		2.6.3 函数过于庞大
+		2.6.4 对函数进行取地址
+	2.7 总结：内联函数只是编译器的一个建议，但是编译器不一定接收这个建议，好的编译器会自己给短小的函数添加inline
+
+#include <iostream>
+using namespace std;
+
+//宏缺陷1：必须要加括号保证运算完整性
+#define MYADD(x,y) ((x)+(y))
+
+void test01()
+{
+	int a = 10;
+	int b = 20;
+	int ret = MYADD(a,b) * 20;
+
+	cout << ret << endl;
+}
+
+//宏缺陷2：即使加了括号，有些运算依然与预期不符
+#define MYCOMPARE(a,b) ( (a) < (b) ? (a) : (b) )
+
+void mycompare(const int a, const int b) //普通函数不会出现这样的问题
+{
+	int ret = a < b ? a : b;
+
+	cout << ret << endl;
+}
+
+void test02()
+{
+	int a = 10;
+	int b = 20;
+
+	int ret = MYCOMPARE(++a, b);
+	cout << ret << endl;
+}
+
+//内联函数
+//函数的声明和实现必须同时加关键字 inline
+//内联函数 好处：解决宏定义的缺陷，本身是一个函数，
+inline void func();
+inline void func() {}
+//类内部的函数都自动成为内联函数
+
+int main()
+{
+	test01();
+	test02();
+	mycompare(10,20);
+
+	return 0;
+}
+

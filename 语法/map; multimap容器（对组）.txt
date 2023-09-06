@@ -1,0 +1,282 @@
+map / multimap容器基本概念
+1.简介
+map中所有的元素都是pair
+pair中的第一个元素为key(键值)，起到了索引的作用。第二个元素为value(实值)。
+所有的元素会根据元素的键值来自动排序。
+
+2.本质
+底层结构是二叉树。
+
+3.优点：
+快速根据key值找到value。
+
+4.map与multimap容器区别是什么？
+map容器不允许容器中有重复的key值元素。
+multimap容器允许容器中有重复的key值元素。
+
+#include <iostream>
+using namespace std;
+#include <map>
+
+void printMap(map<int, int> &m)
+{
+	for (map<int, int>::iterator it = m.begin(); it != m.end(); it++)
+	{
+		cout << "key = " << (*it).first << " ";
+		cout << "value = " << it->second << endl;
+	}
+}
+
+int main()
+{
+	//1.创建一个map容器
+	map<int, int> m;
+
+	//2.创建一些队组
+	pair<int, int> p1(1, 10);	//打乱也会根据key值自动排序（升序）
+	pair<int, int> p2(2, 20);
+	pair<int, int> p3(3, 30);
+	pair<int, int> p4(4, 40);
+	pair<int, int> p5(5, 50);
+
+	//3.将一些对组插入到容器
+	m.insert(p1);
+	m.insert(p2);
+	m.insert(p3);
+	m.insert(p4);
+	m.insert(p5);
+
+	printMap(m);
+
+
+	map <int, int>m2(m);	//拷贝构造
+	cout << "----------------------" << endl;
+	printMap(m2);
+
+	cout << "----------------------" << endl;
+	map<int, int> m3;		//operator =();   等号重载
+	m3 = m2;
+	printMap(m3);
+
+	if (m3.empty())		//empty()  判断是否为空
+	{
+		cout << "m3为空" << endl;
+	}
+	else {
+		cout << "m3不为空" << endl;
+		cout << "m3的大小：" << m3.size() << endl;   // size() 判断容器大小
+	}
+
+	map<int, int> m4;
+	pair<int, int> p11(11,110);
+	pair<int, int> p22(55,550);
+	pair<int, int> p33(22,220);
+	pair<int, int> p44(44,440);
+	pair<int, int> p55(33,330);
+
+	m4.insert(p11);
+	m4.insert(p22);
+	m4.insert(p33);
+	m4.insert(p44);
+	m4.insert(p55);
+
+	cout << "--------- 交换前 -----------" << endl;
+	printMap(m4);
+	cout << "-----------------------" << endl;
+	printMap(m);
+
+	cout << "------- 交换后 ------------" << endl;
+	m4.swap(m);		//swap();  交换
+	printMap(m4);
+	cout << "----------------------" << endl;
+	printMap(m);
+
+	//m4.clear();		//clear();  清空
+	//printMap(m4);
+
+	//m.erase(m.begin(), m.end());	//区间删除
+	//printMap(m);
+
+	map<int, int>::iterator pos = m4.find(1);	//find();  寻找元素
+	if (pos != m4.end())
+	{
+		cout << "找到了:" << (*pos).second << " " << pos->first << endl;
+	}
+	else {
+		cout << "未找到" << endl;
+	}
+
+	cout << "key的元素个数:" << m4.count(2) << endl;	//count(value);  统计元素个数
+
+	return 0;
+}
+
+================================================================================================================================
+练习：
+
+#include <iostream>
+using namespace std;
+#include <vector>
+#include <map>
+
+#define CEHUA	0
+#define MEISHU	1
+#define YANFA	2
+
+//员工类
+class Person {
+public:
+	string m_Name;
+	int m_Num;
+};
+
+//遍历multimap容器
+void printMap(multimap<int, string> &m)
+{
+	for (multimap<int, string>::iterator it = m.begin(); it != m.end(); it++)
+	{
+		cout << "部门:" << it->first << " ";
+		cout << "姓名:" << it->second << endl;
+	}
+}
+
+//创建员工并加入vector容器
+void createworker(vector<Person>& v)
+{
+	string nameSeed = "ABCDEFGHIJ";
+	int i;
+	Person p;
+	for (i = 0; i < 10; i++)
+	{
+		//准备员工姓名
+		p.m_Name = "员工";
+		p.m_Name += nameSeed[i];
+
+		//准备员工工资
+		p.m_Num = rand() % 10000 + 10000;
+
+		//将p加入到容器
+		v.push_back(p);
+	}
+}
+
+void printVector(vector<Person>& v)
+{
+	for (vector<Person>::iterator it = v.begin(); it != v.end(); it++)
+	{
+		cout << it->m_Name << " ";
+		cout << "工资:" << it->m_Num << endl;
+	}
+}
+
+void setGroup(vector<Person>& v, multimap<int, Person>& m)
+{
+	int deptid; //部门编号
+
+	//取出vector容器中每一个员工，给每一个员工分组
+	for (vector<Person>::iterator it = v.begin(); it != v.end(); it++)
+	{
+		//为每一个员工随机一个部门
+		deptid = rand() % 3;  // 012
+
+		//将该员工以及分配的部门插入到multimap容器中
+		//key -> 部门编号
+		//value -> 员工（姓名，工资）
+		m.insert(make_pair(deptid, *it));
+	}
+}
+
+void showPersonByGroup(multimap<int, Person>& m)
+{
+	//0: ABC    1:DE      2:FGHIJ
+	cout << "策划部门:" << endl;
+
+	//寻找策划部门的第一个人的迭代器
+	multimap<int, Person>::iterator pos = m.find(CEHUA); //pos指向策划部门第一个人
+
+	//计算策划部门的总人数
+	int count = m.count(CEHUA);
+
+	int index = 0;
+	for (; pos != m.end() && index < count; index++,pos++)
+	{
+		cout << "姓名:" << pos->second.m_Name << " 工资:" << pos->second.m_Num << endl;
+	}
+
+	cout << "-------------------------------------------" << endl;
+
+	cout << "美术部门:" << endl;
+	pos = m.find(MEISHU);
+	count = m.count(MEISHU);
+	index = 0;
+	for (; pos != m.end() && index < count; index++, pos++)
+	{
+		cout << "姓名:" << pos->second.m_Name << " 工资:" << pos->second.m_Num << endl;
+	}
+
+	cout << "-------------------------------------------" << endl;
+
+	cout << "研发部门:" << endl;
+	pos = m.find(YANFA);
+	count = m.count(YANFA);
+	index = 0;
+	for (; pos != m.end() && index < count; index++, pos++)
+	{
+		cout << "姓名:" << pos->second.m_Name << " 工资:" << pos->second.m_Num << endl;
+	}
+
+}
+
+int main()
+{
+	srand(time(NULL));
+
+	//创建vector容器
+	vector<Person> v;
+	createworker(v);
+
+	//2.设置部门编码
+	multimap<int, Person> m;
+	setGroup(v, m);
+
+	//3.分组显示员工的信息
+	showPersonByGroup(m);
+
+
+	return 0;
+}
+
+
+------------------------------------------------------------------------------------
+策划部门:
+姓名:员工D 工资:13072
+姓名:员工I 工资:13215
+-------------------------------------------
+美术部门:
+姓名:员工C 工资:18701
+-------------------------------------------
+研发部门:
+姓名:员工A 工资:14682
+姓名:员工B 工资:16894
+姓名:员工E 工资:10981
+姓名:员工F 工资:13832
+姓名:员工G 工资:12538
+姓名:员工H 工资:11747
+姓名:员工J 工资:10376
+
+------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+this指针
+
+1.this指针 指向 被调用的成员函数所属的对象
+2.this指针可以解决一些名称冲突问题
+3.this指针隐藏在每个成员函数中
+4.*this就是本体
+5.p1.personAddPerson(p2).personAddPerson(p2).personAddPerson(p2); 链式编程思想
+
+
+空指针访问成员函数
+
+1.如果成员函数中没有用到this指针，可以用空指针调用成员函数
+2.如果成员函数中用到了this指针，那么这个this需要加判断，否则会报错    if(this == NULL){ return; }
+
+
+常函数和常对象
+
+1.在成员函数的声明后面加 const
+2.void showPerson() const
+3.目的是为了修饰成员函数中的this指针，让指针指向的值不可修改
+4.有些属性比较特殊，依然需要在常函数或常对象中可以修改，需要加入关键字 mutable     例： mutable int m_A;
+
+常对象
+1.const Person p;
+2.常对象也不许修改成员属性
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+using namespace std;
+
+class Person {
+public:
+	Person(int age){
+		this->m_Age = age;
+	}
+
+	void func() {
+		cout << "func的调用" << endl;
+	}
+
+	//常函数， 修饰成员函数中的 this指针， 让指针指向的值不可修改
+	void showPerson() const{
+		//this指针的本质: Person* const this 
+		//this = NULL  指针的指向不可以修改，而指针指向的值可以修改
+		m_A = 100;
+		cout << "Person age = " << m_Age << endl;
+	}
+
+	int m_Age;
+
+	mutable int m_A; //常函数或者常对象中 有些属性依然想要修改， 加入关键字 mutable
+};
+
+void test01() 
+{
+	//常对象
+	const Person p1(10);
+	p1.m_A = 100;
+	//p1.m_Age = 10;
+
+
+	p1.showPerson(); 
+	//p1.func();	//err  常对象只能调用常函数
+}
+
+
+int main()
+{
+	test01();
+
+
+	return 0;
+}

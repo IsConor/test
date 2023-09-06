@@ -1,0 +1,39 @@
+explicit 防止用隐式类型转换的方式实例化对象
+
+
+#include <iostream>
+using namespace std;
+
+
+class MyString {
+public:
+	MyString(const char* str)
+	{
+
+	}
+
+	explicit MyString(int len) //explicit 防止用隐式类型转换的方式实例化对象
+	{
+
+	}
+
+};
+
+void test01()
+{
+	MyString str1("abcd");
+
+	MyString str2 = MyString(100);
+
+	MyString str3(10);
+	//MyString str3 = 10;
+}
+
+
+int main()
+{
+	test01();
+
+
+	return 0;
+}

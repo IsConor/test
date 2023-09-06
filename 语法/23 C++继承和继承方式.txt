@@ -1,0 +1,190 @@
+C++ 继承
+
+1.优势
+
+2.语法
+	class  子类 :  继承方式  父类
+	News		子类	派生类
+	BasePage	父类	基类
+
+3.继承方式
+	3.1 公共继承： 
+		3.1.1 父类中公共权限，子类中变为公共权限
+		3.1.2 父类中保护权限，子类中变为保护权限
+		3.1.3 父类中私有权限，子类中变为私有权限
+	3.2 保护继承：
+		3.2.1 父类中公共权限，子类中变为保护权限
+		3.2.2 父类中保护权限，子类中变为宝华权限
+		3.2.3 父类中私有权限，子类中变为私有权限
+	3.3 私有继承
+		3.3.1 父类中公共权限，子类中变为私有权限
+		3.3.2 父类中保护权限，子类中变为私有权限
+		3.3.3 父类中私有权限，子类中变为私有权限
+
+----------------------------------------------------------------------------------------
+
+#include <iostream>
+using namespace std;
+
+
+//继承优点，减少重复代码，提高代码复用性
+class BasePage {
+public:
+
+	void header() {
+		cout << "公共的头部" << endl;
+	}
+	void footer() {
+		cout << "公共的底部" << endl;
+	}
+	void leftList() {
+		cout << "公共的左侧列表" << endl;
+	}
+
+};
+
+// class  子类 :  继承方式  父类
+//News		子类	派生类
+//BasePage	父类	基类
+class News :public BasePage {
+public:
+	void content() {
+		cout << "新闻播报" << endl;
+	}
+};
+
+class Sport :public BasePage {
+public:
+	void content() {
+		cout << "世界杯赛况" << endl;
+	}
+};
+
+void test01()
+{
+	News news;
+	cout << "新闻页面内容如下:" << endl;
+	news.header();
+	news.footer();
+	news.leftList();
+	news.content();
+
+	Sport sport;
+	cout << "体育页面内容如下:" << endl;
+	sport.header();
+	sport.footer();
+	sport.leftList();
+	sport.content();
+
+}
+
+
+int main()
+{
+	test01();
+
+
+	return 0;
+}
+
+------------------------------------------------------------------------------------------------------------
+
+/*继承方式*/
+#include <iostream>
+using namespace std;
+
+/*公共继承*/
+
+class Base1 {
+public:
+	int m_A;
+protected:
+	int m_B;
+private:
+	int m_C;
+};
+
+class Son1 :public Base1 {
+public:
+	void func() {
+		m_A = 100;		//父类中 公共权限	子类中变为公共权限
+		m_B = 100;		//父类中 保护权限	子类中变为保护权限
+		//m_C = 100;	//父类中 私有权限	子类无法访问
+	}
+};
+
+void test01()
+{
+	Son1 s1;
+	s1.m_A = 100;	//在Son1中m_A是公共权限，类外不可访问
+	//s1.m_B = 100;	//保护权限 类外不可访问
+}
+
+
+/*保护继承*/
+
+class Base2 {
+public:
+	int m_A;
+protected:
+	int m_B;
+private:
+	int m_C;
+};
+
+class Son2 :protected Base2 {
+public:
+	void func() {
+		m_A = 100;		//父类中	公共权限	子类中变为	保护权限
+		m_B = 100;		//父类中	保护权限	子类中变为	保护权限
+		//m_C = 100;	//父类中	私有权限	子类中	不可访问
+	}
+};
+
+void test02()
+{
+	Son2 s2;
+	//s2.m_A = 100;	//子类中	保护权限	无法访问
+	//s2.m_B = 100;	//子类中	保护权限	无法访问
+	//s2.m_C = 100;	//子类本身没有访问权限
+}
+
+
+/*私有继承*/
+
+class Base3 {
+public:
+	int m_A;
+protected:
+	int m_B;
+private:
+	int m_C;
+};
+
+class Son3 :private Base3 {
+public:
+	
+	void func() {
+		m_A = 100;	//父类中	公共权限	子类中变为	私有权限
+		m_B = 100;	//父类中	保护权限	子类中变为	私有权限
+		//m_C = 100;//父类中私有成员	子类无法访问
+	}
+};
+
+void test03()
+{
+	Son3 s;
+	//s.m_A = 100;	//在Son3中变为私有权限，类外无权访问
+	//s.m_B = 100;
+	//s.m_C = 100;
+}
+
+int main()
+{
+	test01();
+	test02();
+	test03();
+
+
+	return 0;
+}

@@ -1,0 +1,188 @@
+多态项目：组装电脑
+
+----------------------------------------------- 头文件------------------------------------------------------------
+
+#pragma once
+#include <iostream>
+using namespace std;
+
+
+//CPU抽象类
+class CPU {
+public:
+	virtual void caculate() = 0;
+
+	//因为派生类中有属性指向堆区空间，所以需要用虚析构释放子类空间
+	virtual ~CPU() = 0;
+};
+
+//VideoCard 抽象类
+class VideoCard {
+public:
+	virtual void display() = 0;
+	virtual ~VideoCard() = 0;
+};
+
+//Memory 抽象类
+class Memory {
+public:
+	virtual void storage() = 0;
+	virtual ~Memory() = 0;
+};
+
+
+
+//Level的厂商
+class LevelCpu :public CPU {
+public:
+	virtual void caculate();
+};
+
+class LevelVideoCard :public VideoCard {
+public:
+	virtual void display();
+};
+
+class LevelMemory :public Memory {
+public:
+	virtual void storage();
+};
+
+
+//Intel的厂商
+class IntelCpu :public CPU {
+public:
+	IntelCpu();
+	virtual void caculate();
+	~IntelCpu();
+};
+
+class IntelVideoCard :public VideoCard {
+public:
+	virtual void display();
+};
+
+class IntelMemory :public Memory {
+public:
+	virtual void storage();
+};
+
+
+//Computer 类
+class Computer {
+public:
+	//有参构造函数
+	Computer(CPU* cpu, VideoCard* videocard, Memory* memory);
+
+	//虚析构
+	~Computer();
+
+	void doWork();
+
+	CPU* m_Cpu;
+	VideoCard* m_Vc;
+	Memory* m_mem;
+};
+
+--------------------------------------------------- .cpp 文件--------------------------------------------------------------
+
+#include "mytest.h"
+
+CPU::~CPU(){}
+
+VideoCard::~VideoCard(){}
+
+Memory::~Memory(){}
+
+void LevelCpu::caculate() {
+	cout << "Level CPU is caculating" << endl;
+}
+
+IntelCpu::IntelCpu() {
+	cout << "IntelCPU构造函数调用" << endl;
+}
+
+
+IntelCpu::~IntelCpu() {
+	cout << "IntelCPU析构函数调用" << endl;
+}
+
+void IntelCpu::caculate() {
+	cout << "Intel CPU is caculating" << endl;
+}
+
+void LevelVideoCard::display() {
+	cout << "Level VideoCard is displaying" << endl;
+}
+
+void IntelVideoCard::display() {
+	cout << "Intel VideoCard is displaying" << endl;
+}
+
+void LevelMemory::storage() {
+	cout << "Level Memory is storaging" << endl;
+}
+
+void IntelMemory::storage() {
+	cout << "Intel Memory is storaging" << endl;
+}
+
+Computer::Computer(CPU* cpu, VideoCard* videocard, Memory* memory) {
+	cout << "Computer 构造函数调用" << endl;
+	this->m_Cpu = cpu;
+	this->m_Vc = videocard;
+	this->m_mem = memory;
+}
+
+void Computer::doWork() {
+	m_Cpu->caculate();
+	m_Vc->display();
+	m_mem->storage();
+}
+
+Computer::~Computer() {
+	cout << "Computer 析构调用" << endl;
+
+	if (this->m_Cpu) {
+		delete this->m_Cpu;
+		this->m_Cpu = NULL;
+	}
+	if (this->m_mem) {
+		delete this->m_mem;
+		this->m_mem = NULL;
+	}
+	if (this->m_Vc) {
+		delete this->m_Vc;
+		this->m_Vc = NULL;
+	}
+}
+
+
+------------------------------------------------------ main文件-------------------------------------------------
+
+#include "mytest.h"
+
+
+void test01() {
+	//选择cpu
+	CPU* cpu = new IntelCpu;		
+
+	//选择VideoCard
+	VideoCard* vc = new LevelVideoCard;
+
+	//选择Memory
+	Memory* mem = new LevelMemory;
+
+	//实例化电脑
+	Computer computer(cpu, vc, mem);
+
+	//开始运行
+	computer.doWork();
+}
+
+
+int main() {
+
+	test01();
+	return 0;
+}

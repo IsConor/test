@@ -1,0 +1,77 @@
+虚析构和纯虚析构
+
+1.虚析构语法
+	virtual ~Animal(){ cout << "虚析构的调用" << endl; }
+	如果子类中有指向堆区的属性，那么要利用虚析构  在delete的时候，释放子类在堆区的空间
+2.纯虚析构语法
+	类内声明，类外实现
+	类内: virtual ~Animal() = 0;    类外: Animal::~Animal(){ cout << "纯虚析构的调用" << endl; }      
+	如果类中有纯虚析构，那么这个类也是抽象类，无法实例化对象
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+#include <iostream>
+using namespace std;
+
+class Animal {
+public:
+	Animal() {
+		cout << "Animal构造函数调用" << endl;
+	}
+	virtual void speak() {
+
+	}
+
+	//如果子类中有指向堆区的属性，那么要利用虚析构  在delete的时候，释放子类在堆区的空间
+	virtual ~Animal() {
+		cout << "Animal析构函数调用" << endl;
+	}
+	
+	//virtual ~Animal() = 0; //纯虚析构 -> 类内声明，类外实现
+};
+
+/*
+//如果类中有纯虚析构，那么这个类也是抽象类，无法实例化对象
+Animal::~Animal() {
+	cout << "Animal的纯虚析构调用" << endl;
+}
+*/
+
+class cat :public Animal {
+public:
+	cat(const char* name) {
+		cout << "cat有参构造调用" << endl;
+		this->m_Name = new char[strlen(name) + 1];
+		strcpy(this->m_Name, name);
+	}
+
+	virtual void speak() {
+		cout << "cat is speaking" << endl;
+	}
+
+	~cat() {
+		if (this->m_Name != NULL) {
+			cout << "cat析构函数调用" << endl;
+			delete []this->m_Name;
+			this->m_Name = NULL;
+		}
+	}
+
+	char* m_Name;
+};
+
+void test01() {
+	Animal* animal = new cat("Tom"); //基类指针指向派生类对象
+	animal->speak();
+	delete animal;
+}
+
+
+int main()
+{
+	test01();
+
+	return 0;
+}

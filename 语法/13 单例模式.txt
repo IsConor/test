@@ -1,0 +1,124 @@
+单例模式
+通过一个类 只能实例化唯一的一个对象
+私有化
+	默认构造
+	拷贝构造
+	唯一实例指针
+对外提供getinstance接口，将指针返回
+
+单例模式：打印机
+1.和主席类的案例一样设计单例模式
+2.提供打印功能并且统计打印次数
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+using namespace std;
+
+//主席类
+class ChairMan {
+public:
+	static ChairMan* getInstaces() {
+		return singleMan;
+	}
+
+private:
+	//将构造函数私有化，不可以创建多个对象
+	ChairMan(){}
+
+private:
+	static ChairMan* singleMan; //类内声明，类外初始化
+};
+
+ChairMan* ChairMan::singleMan = new ChairMan;
+
+void test01() 
+{
+	/*ChairMan c1;
+	ChairMan c2;
+	ChairMan* c3 = new ChairMan;*/
+	/*ChairMan* c1 = ChairMan::singleMan;
+	ChairMan* c2 = ChairMan::singleMan;
+
+	if (c1 == c2) {
+		cout << "c1 == c2" << endl;
+	}
+	else {
+		cout << "c1 != c2" << endl;
+	}*/
+
+	ChairMan* c1 = ChairMan::getInstaces();
+	ChairMan* c2 = ChairMan::getInstaces();
+	ChairMan* c3 = new ChairMan(c1);
+}
+
+int main()
+{
+	test01();
+
+
+	return 0;
+}
+
+
+案例：打印机
+
+#include <iostream>
+using namespace std;
+#include <string>
+
+//打印机类
+class Printer {
+public:
+	//静态成员函数，用于返回私有权限下的静态成员对象
+	static Printer* getinstance() {
+		return printer;
+	}
+
+	//普通成员函数 打印
+	void printText(const string text) {
+		cout << text << endl;
+		m_Count++;
+	}
+
+	//统计打印次数
+	int m_Count = 0;	//打印次数
+private:
+	//构造函数，放在私有权限中，因为是单例模式
+	Printer() { cout << "打印机构造函数的调用" << endl; }
+	//拷贝构造
+	Printer(const Printer& p){}
+	//静态成员变量指针，类内声明
+	static Printer* printer;
+};
+
+//类外初始化
+Printer* Printer::printer = new Printer;
+
+void test01() {
+	Printer* p1 = Printer::getinstance();
+	p1->printText("入职证明");
+
+	cout << "打印的次数：" << p1->m_Count << endl;
+}
+
+int main()
+{
+	cout << "main函数的调用" << endl;
+	test01();
+
+	return 0;
+}
+
+
+
+
+
+
+
+

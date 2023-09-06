@@ -1,0 +1,323 @@
+set 容器的基本概念
+简介：所有元素都会在插入时自动被排序。
+
+本质：set/multiset 容器底层结构就是二叉树。
+
+set/multiset区别？
+set不允许容器中有重复的元素。
+multiset允许容器中有重复的元素。
+
+无论使用set还是multiset ， 头文件都是 #include <set>
+
+
+
+#include <iostream>
+using namespace std;
+#include <set>
+
+//遍历
+void printSet(set<int> &s)
+{
+	for (set<int>::iterator it = s.begin(); it != s.end(); it++)
+	{
+		cout << *it << " ";
+	}
+
+	cout << endl;
+}
+
+int main()
+{
+	set <int>s;	//构造函数
+
+	//set容器没有Push_back()，只有insert()；
+	s.insert(10); //插入数据
+	s.insert(40);
+	s.insert(30);
+	s.insert(50);
+	s.insert(20);
+	s.insert(90);
+	s.insert(80);
+
+	printSet(s);
+
+	set <int>s2(s);	//拷贝构造
+	printSet(s2);
+
+	set <int>s3;	//operator =();   等号重载
+	s3 = s2;
+	printSet(s3);
+
+	if (s3.empty())	//empty();  判断是否为空
+	{
+		cout << "s3为空" << endl;
+	}
+	else {
+		cout << "s3不为空" << endl;
+		cout << "s3的大小:" << s3.size() << endl;	//size();  计算容器大小（元素个数）
+	}
+
+	set <int>s4;
+	s4.insert(100);
+	s4.insert(300);
+	s4.insert(400);
+	s4.insert(200);
+	s4.insert(200);
+
+	cout << "=========== 交换前 =============" << endl;
+	printSet(s3);
+	printSet(s4);
+
+	s3.swap(s4);	//交换
+
+	cout << "========== 交换后 ==============" << endl;
+	printSet(s3);
+	printSet(s4);
+
+	// s3.clear();		//clear();  清空
+	//printSet(s3);
+
+	s3.erase(s3.begin()); //选择性删除
+	printSet(s3);
+
+	set<int>::iterator pos = s3.find(300);	//find();  寻找一个元素，返回值是该键的迭代器
+	if (pos != s3.end())
+	{
+		cout << "找到该元素了" << *pos << endl;
+	}
+	else {
+		cout << "未找到该元素" << endl;
+	}
+
+	cout << s3.count(200) << endl;	//count();  统计元素个数,有2个200，返回也是1
+
+
+
+	return 0;
+}
+
+----------------------------------------------------------
+
+10 20 30 40 50 80 90
+10 20 30 40 50 80 90
+10 20 30 40 50 80 90
+s3不为空
+s3的大小:7
+=========== 交换前 =============
+10 20 30 40 50 80 90
+100 200 300 400
+========== 交换后 ==============
+100 200 300 400
+10 20 30 40 50 80 90
+200 300 400
+找到该元素了300
+1
+
+-----------------------------------------------------------
+
+
+
+===================================================================================================================================
+
+
+二、pair对组的创建
+
+功能的描述：
+成对出现的数据，利用队组可以返回两个数据。
+
+对组怎么创建？
+方法有两种：
+pair<type, type> p(value1, value2);
+pair<type, type> p = make_pair(value1, value2);
+
+
+#include <iostream>
+using namespace std;
+
+//对组的创建
+
+int main()
+{
+	//第一种方式
+	pair<string, int> p("Tom", 18); //有参构造方式
+	cout << "name = " << p.first << " age = " << p.second << endl;	//第一个元素：first   第二个元素：second
+
+	//第二种方式
+	pair<string, int> p2 = make_pair("Rose", 18);	//函数调用方式
+	cout << "name = " << p2.first << " age = " << p2.second << endl;
+
+	return 0;
+}
+
+=====================================================================================================================================
+
+三、set容器的排序   			--             set容器存放内置数据类型。
+
+
+#include <iostream>
+using namespace std;
+#include <set>
+
+
+//set容器存放内置数据类型
+
+class Mycompare {
+public:
+	//重载()
+	bool operator()(int v1, int v2) const
+	{
+		return v1 > v2;
+	}
+};
+
+int main()
+{
+	set <int>s1;	//默认是升序
+
+	//插入之前
+
+	s1.insert(10);
+	s1.insert(40);
+	s1.insert(20);
+	s1.insert(50);
+	s1.insert(30);
+
+	//插入之后
+
+	for (set<int>::iterator it = s1.begin(); it != s1.end(); it++)	////二叉树默认排序方式是升序
+	{
+		cout << *it << " ";
+	}
+	cout << endl;	
+
+	cout << "--------------------------------------------------------------" << endl;
+
+	set <int, Mycompare>s2;	//默认是降序
+	//插入之前
+
+	s2.insert(10);
+	s2.insert(40);
+	s2.insert(20);
+	s2.insert(50);
+	s2.insert(30);
+
+	//插入之后
+
+	for (set<int,Mycompare>::iterator it = s2.begin(); it != s2.end(); it++)	////二叉树默认排序方式是升序
+	{
+		cout << *it << " ";
+	}
+	cout << endl;
+
+
+
+	//sort(); 因为二叉树set容器是双向迭代器，所以不可以使用标准算法sort
+	//s.sort(); 内部也没有提供sort的算法
+
+	//思考： 能不能在插入之后再进行降序？
+	//答案： 不可以。
+
+	//怎么才能降序？
+	//必须在插入之前，告诉容器，要降序排序
+
+
+	return 0;
+}
+
+
+
+总结：
+set容器默认是升序，如果想降序，自己写一个类，然后在类中重载()，让第一个数字大于第二个数字。
+class Mycompare{
+public:
+	bool operator()(int v1, int v2) const
+	{
+		return v1 > v2;
+	}
+};
+
+把类名写入到定义二叉树set对象<>里面即可，例如：set <int>s; -> set <int, Mycompare>s;
+
+
+----------------------------------       做个小项目（非常有成就感） -------------------------------------
+//根据年龄降序排列四个人物
+
+#include <iostream>
+using namespace std;
+#include <set>
+
+class Person {
+public:
+	Person(string name, int age)
+	{
+		this->m_Name = name;
+		this->m_Age = age;
+	}
+
+	string m_Name;
+	int m_Age;
+};
+
+
+//写一个类用来降序
+class Mycompare {
+public:
+	bool operator()(Person v1, Person v2) const
+	{
+		return v1.m_Age > v2.m_Age;
+	}
+};
+
+void printSet(set<Person,Mycompare> &s)
+{
+	for (set<Person, Mycompare>::iterator it = s.begin(); it != s.end(); it++)
+	{
+		cout << "姓名：" << (*it).m_Name << " ";
+		cout << "年龄：" << (*it).m_Age << endl;
+	}
+}
+
+int main()
+{
+	//根据Person类，实例化对象
+	Person p1("刘备", 63);
+	Person p2("关羽", 18);
+	Person p3("张飞", 50);
+	Person p4("赵云", 60);
+
+	//创建二叉树的set容器
+	set <Person, Mycompare> s1;
+
+	//在容器中插入数据
+	s1.insert(p1);
+	s1.insert(p2);
+	s1.insert(p3);
+	s1.insert(p4);
+
+	//遍历
+	printSet(s1);
+	
+
+	return 0;
+}
+
+
+总结：对于自定义的数据类型，如果不指定规则，是无法插入数据的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

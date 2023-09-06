@@ -1,0 +1,62 @@
+静态联编和动态联编
+
+1.静态多态和动态多态
+2.静态多态：函数重载，运算符重载
+3.动态多态：
+	3.1 先有继承关系
+	3.2 基类中有虚函数(virtual) 派生类中重写基类的虚函数，派生类中的virtual可省略
+	3.3 基类的指针或引用，指向子类的对象
+4.静态多态地址早就绑定好了，静态联编
+5.动态多态在运行阶段绑定地址，地址晚绑定，动态联编
+
+----------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+using namespace std;
+
+class Animal {
+public:
+	virtual void speak() { //virtual + 成员函数 = 虚函数
+		cout << "animal is speaking" << endl;
+	}
+};
+
+class Cat :public Animal {
+public:
+	void speak() {
+		cout << "cat is speaking" << endl;
+	}
+};
+
+class Dog :public Animal {
+public:
+	void speak() {
+		cout << "Dog is speaking" << endl;
+	}
+};
+
+//对于基类和派生类  指针或者引用是可以直接转换的
+void dospeak(Animal& animal) { //Animal& animal = cat;
+	animal.speak();	//如果地址早就绑定好了， 地址早绑定，属于静态联编
+	//如果像调用cat speaking 那么这个函数的地址就不能提前绑定，而是在运行的时候进行绑定
+}
+
+void test01() {
+	Cat cat;
+	Dog d;
+	dospeak(cat);
+	dospeak(d);
+}
+
+//动态多态产生条件
+//1.先有继承关系
+//2.基类中有虚函数，派生类中重写基类的虚函数，派生类的virtual可省略
+//3.基类的指针或引用 指向子类的对象
+
+int main()
+{
+	test01();
+
+	return 0;
+}
+

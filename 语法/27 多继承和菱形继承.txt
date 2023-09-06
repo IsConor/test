@@ -1,0 +1,95 @@
+多继承基本语法
+1.class Son :public Base1, public Base2 {}；
+2.当多继承的两个父类中有同名成员，需要加作用域区分
+
+菱形继承
+1. 两个类有共同的父类和共同的子类 ， 发生菱形继承
+2. 菱形继承导致数据有两份，浪费资源
+3.解决方案：利用虚继承可以解决菱形继承问题
+	3.1 class Sheep :virtual public Animal {}; //虚继承
+	3.2 当发生了虚继承后，sheep和Tuo类中 继承了一个 vbptr指针 虚基类指针 指向的是一个虚基类表 vbtable
+	3.3 需基类表中记录了 偏移量， 通过偏移量 可以找到唯一的一个m_Age
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+					/*多继承*/
+#include <iostream>
+using namespace std;
+
+/*多继承*/
+
+class Base1 {	//基类1
+public:
+	Base1() {
+		this->m_A = 10;
+	}
+	int m_A;
+};
+
+class Base2 {	//基类2
+public:
+	Base2() {
+		this->m_A = 20;
+	}
+	int m_A;
+};
+
+class Son :public Base1, public Base2 {	//派生类
+public:
+
+	int m_C;
+	int m_D;
+};
+
+void test01() {
+	cout << "Sizeof Son = " << sizeof(Son) << endl;
+
+	Son s;
+	cout << s.::Base1::m_A << endl;
+}
+
+int main()
+{
+	test01();
+
+	return 0;
+}
+
+----------------------------------------------------------------------------------------------------------
+					/*菱形继承*/
+#include <iostream>
+using namespace std;
+
+class Animal {
+public:
+	int m_Age;
+};
+
+//羊类
+class Sheep :virtual public Animal {};
+//驼类
+class Tuo :virtual public Animal {};
+//羊驼类
+class SheepTuo :public Sheep, public Tuo {
+public:
+
+};
+
+void test01() {
+	SheepTuo st;
+	st.Sheep::m_Age = 10;
+	st.Tuo::m_Age = 20;
+
+	cout << st.m_Age << endl;
+}
+
+//当发生了虚继承后，sheep和Tuo类中 继承了一个 vbptr指针 虚基类指针 指向的是一个虚基类表 vbtable
+//需基类表中记录了 偏移量， 通过偏移量 可以找到唯一的一个m_Age
+
+int main()
+{
+	test01();
+
+	return 0;
+}

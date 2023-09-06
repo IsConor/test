@@ -1,0 +1,72 @@
+类对象作为类成员的案例：
+
+Phone的有参构造的调用    ---->     先构造的phone
+Game的有参构造的调用      ---->  然后构造手机
+Person的有参构造的调用  ---->  最后构造人类
+Person的析构的调用
+Game的析构函数调用
+Phone的析构调用
+
+总结：当其他类对象，作为本类成员，先构造其他类对象，再构造自身，析构的顺序和构造相反
+
+--------------------------------------------------------------------------------------
+#include <iostream>
+using namespace std;
+
+class Phone {
+public:
+
+	Phone(string pName) : m_PhoneName(pName) {
+		cout << "Phone的有参构造的调用" << endl;
+	}
+
+	~Phone() {
+		cout << "Phone的析构调用" << endl;
+	}
+
+	string m_PhoneName;
+};
+
+class Game {
+public:
+
+	Game(string gName) : m_GameName(gName) {
+		cout << "Game的有参构造的调用" << endl;
+	}
+
+	~Game() {
+		cout << "Game的析构函数调用" << endl;
+	}
+
+	string m_GameName;
+};
+
+class Person {
+public:
+
+	Person(string name, string pName, string gName) :m_Name(name), m_Phone(pName), m_Game(gName) {
+		cout << "Person的有参构造的调用" << endl;
+	}
+
+	~Person(){
+		cout << "Person的析构的调用" << endl;
+	}
+
+	string m_Name;	//姓名
+	Phone m_Phone;	//手机
+	Game m_Game;	//游戏
+};
+
+void test01()
+{
+	Person p("tom", "iphone", "game");
+
+}
+
+int main()
+{
+	test01();
+
+
+	return 0;
+}

@@ -1,0 +1,57 @@
+queue容器
+
+概念：queue容器是一种先进先出的结构，它有两个口
+
+队列容器允许从一段新增元素，从另一端移除元素。
+队列中队头与队尾才可以被外界使用，因此队列不允许有遍历行为。
+
+队列中进数据  ->  入队
+队列中出数据  ->  出队
+
+#include <iostream>
+using namespace std;
+#include <queue>
+
+class Person {
+public:
+	Person(string name, int age)
+	{
+		this->m_Name = name;
+		this->m_Age = age;
+	}
+
+	string m_Name;
+	int m_Age;
+};
+
+
+int main()
+{
+	queue <Person>q;
+
+	Person p1("Tom", 18);
+	Person p2("Cat", 20);
+	Person p3("Rose", 100);
+	Person p4("Jack", 200);
+
+	q.push(p1);	//入队
+	q.push(p2);
+	q.push(p3);
+	q.push(p4);
+
+	cout << "队列的大小" << q.size() << endl; //q.size();  计算元素个数
+
+	
+
+	//只要队列不为空，那么就查看队尾与队头的元素
+	while (!q.empty())
+	{
+		cout << "队头的元素 - 姓名：" << q.front().m_Name << "年龄：" << q.front().m_Age << endl;	//front();  队头
+		cout << "队尾的元素 - 姓名：" << q.back().m_Name << "年龄：" << q.back().m_Age << endl;		//back();	队尾
+
+		cout << "----------------------------------------" << endl;
+		q.pop();
+	}
+
+	return 0;
+}

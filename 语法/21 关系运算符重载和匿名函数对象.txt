@@ -1,0 +1,60 @@
+1.关系运算符重载
+
+	对于自定义数据类型，编译器不知道如何进行比较，所以要进行关系运算符重载
+	bool operator==(Person& p)
+
+2.重载()
+	在使用时很像函数的调用，因此称为仿函数   void operator()(string test)
+	仿函数的写法不固定，比较灵活
+
+3.匿名函数对象
+	cout << MyAdd()(1, 1) << endl; //匿名函数对象，特点：当前行执行完立即释放
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+using namespace std;
+
+class Person {
+public:
+	//有参构造
+	Person(string name, int age){
+		this->m_Name = name;
+		this->m_Age = age;
+	}
+
+	//关系运算符重载
+	bool operator==(Person& p) {
+		if (this->m_Name == p.m_Name && this->m_Age == p.m_Age) {
+			return true;
+		}
+		return false;
+	}
+
+	string m_Name;
+	int m_Age;
+};
+
+void test01()
+{
+	Person p1("Tom", 18);
+	Person p2("Cat", 18);
+
+	if (p1 == p2) {
+		cout << "p1 = p2" << endl;
+	}
+	else {
+		cout << "p1 != p2" << endl;
+	}
+}
+
+
+int main()
+{
+	test01();
+
+
+
+	return 0;
+}

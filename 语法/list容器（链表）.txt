@@ -1,0 +1,290 @@
+list容器。    ->    链表
+
+功能：链式存储数据。
+迭代器：由于链表不是一段连续的空间，所以链表的迭代器只能支持前移和后移，属于双向迭代器。
+
+
+#include <iostream>
+using namespace std;
+#include <list>
+
+void printList(list<int>& L)
+{
+	for (list<int>::iterator it = L.begin(); it != L.end(); it++)
+	{
+		cout << *it << " ";
+	}
+	cout << endl;
+}
+
+int main()
+{
+	list <int>L1;	//构造函数
+
+	L1.push_back(10);
+	L1.push_back(20);
+	L1.push_back(30);
+
+	printList(L1);
+
+	list <int>L2(L1.begin(), L1.end()); //区间
+	printList(L2);
+
+	list <int>L3(10, 100);	//10个100
+	printList(L3);
+
+	list <int>L4(L3);	//拷贝构造
+	printList(L4);
+
+	list <int>L5;
+	L5.assign(L4.begin(), L4.end());	//assign(); 重载
+	printList(L5);
+
+	list <int>L6;	// = 号重载
+	L6 = L5;
+	printList(L6);
+
+	cout << "===============   互换前:   =================" << endl;
+	printList(L2);
+	printList(L6);
+	cout << "L6的大小:" << L6.size() << endl;
+
+	L6.swap(L2);	// swap();   互换
+
+	cout << "================  互换后:   ================" << endl;
+	printList(L2);
+	printList(L6);
+	cout << "L6的大小:" << L6.size() << endl;
+
+	if (L6.empty())	//empty()  判断是否为空
+	{
+		cout << "L6为空" << endl;
+	}
+	else {
+		cout << "L6不为空" << endl;
+	}
+
+	//L6.resize(10);	//resize()  改变大小，多余的默认0来填充
+	//printList(L6);
+
+	L6.resize(10,7);	//resize() 改变大小，多余的选定7来填充
+	printList(L6);
+
+	L6.push_back(10);	// push_back(); 尾插
+	printList(L6);
+
+	L6.pop_back();		// pop_back(); 尾删
+	printList(L6);
+
+	L6.push_front(20);	//头插
+	printList(L6);
+
+	L6.pop_front();		//头删
+	printList(L6);
+
+	list<int>::iterator it = L6.begin();
+	it++;
+	cout << *it << endl;
+
+	L6.insert(it,1000); //在迭代器的位置插入数据
+	printList(L6);
+
+	L6.erase(it);  //删除迭代器指向的数据
+	printList(L6);
+
+	//L6.clear();		//clear();  清空
+	//printList(L6);
+
+	L6.remove(7);		//删除链表中所有的7
+	printList(L6);
+
+	cout << L6.front() << endl;	//显示第一个元素
+	cout << L6.back() << endl;	//显示最后一个元素
+
+	return 0;
+}
+
+
+2.反转与排序
+
+#include <iostream>
+using namespace std;
+#include <list>
+#include <algorithm>
+
+
+void printList(list<int>& L)
+{
+	for (list<int>::iterator it = L.begin(); it != L.end(); it++)
+	{
+		cout << *it << " ";
+	}
+	cout << endl;
+}
+
+bool mycompare(int v1, int v2)
+{
+	//降序，让第一个数字大于第二个数字
+	return v1 > v2;
+}
+
+int main()
+{
+	list <int>L1;		//构造
+
+	L1.push_back(20);	//压栈
+	L1.push_back(10);
+	L1.push_back(30);
+	L1.push_back(50);
+	L1.push_back(40);
+
+	cout << "反转前:" << endl;
+	printList(L1);
+
+	L1.reverse();		//反转
+
+	cout << "反转后:" << endl;
+	printList(L1);
+
+	cout << "============= 排序前 ================" << endl;
+	printList(L1);
+
+	//所有不支持随机访问迭代器的容器，不可以使用标准算法sort();
+	//不支持随机访问迭代器的容器，内部都会提供对应的算法给它
+
+	L1.sort();			//排序(升序)
+	L1.sort(mycompare);	//排序（降序）
+
+	cout << "============  排序后 ================" << endl;
+	printList(L1);
+	
+
+	return 0;
+}
+---------------------------------------------------
+反转前:							  |
+20 10 30 50 40						  |							
+反转后:							  |
+40 50 30 10 20						  |
+============= 排序前 ================		  |
+40 50 30 10 20						  |
+============  排序后 ================		  |
+50 40 30 20 10						  |
+								  |
+--------------------------------------------------
+
+==================================================================================================================================
+练习：
+
+//根据年龄排序，如果年龄一样就根据身高排序
+
+#include <iostream>
+using namespace std;
+#include <list>
+#include <algorithm>
+
+class Person {
+public:
+	Person(string name, int age, int height)	//有参构造
+	{
+		this->m_Name = name;	//姓名
+		this->m_Age = age;		//年龄
+		this->m_Height = height;	//身高
+	}
+
+	string m_Name;
+	int m_Age;
+	float m_Height;
+};
+
+bool Mycompare(const Person &p1, const Person &p2)
+{
+	if (p1.m_Age == p2.m_Age)
+	{
+		return p1.m_Height > p2.m_Height;
+	}
+	else {
+		return p1.m_Age < p2.m_Age;
+	}
+}
+
+void printList(list<Person>& L)	//遍历链表
+{
+	for (list<Person>::iterator it = L.begin(); it != L.end(); it++)
+	{
+		cout << "姓名:" << it->m_Name << " ";
+		cout << "年龄:" << it->m_Age << " ";
+		cout << "身高:" << it->m_Height << endl;
+	}
+}
+
+int main()
+{
+	Person p1("Tom", 18, 181);
+	Person p2("Cat", 20, 179);
+	Person p3("Rose", 21, 175);
+	Person p4("Jack", 22, 174);
+	Person p5("bao", 22, 184);
+	Person p6("fang", 22, 190);
+
+	//创建链表
+	list<Person> L1;
+
+	L1.push_back(p1);
+	L1.push_back(p2);
+	L1.push_back(p3);
+	L1.push_back(p4);
+	L1.push_back(p5);
+	L1.push_back(p6);
+
+	cout << "--------- 排序之前 ------------------" << endl;
+	printList(L1);
+
+	//对于自定义的数据类型，必须指定排序规则
+	L1.sort(Mycompare);
+
+	cout << "--------  排序之后 -----------------" << endl;
+	printList(L1);
+
+	return 0;
+}
+
+
+------------------------------------------------------
+--------- 排序之前 ------------------
+姓名:Tom 年龄:18 身高:181
+姓名:Cat 年龄:20 身高:179
+姓名:Rose 年龄:21 身高:175
+姓名:Jack 年龄:22 身高:174
+姓名:bao 年龄:22 身高:184
+姓名:fang 年龄:22 身高:190
+--------  排序之后 -----------------
+姓名:Tom 年龄:18 身高:181
+姓名:Cat 年龄:20 身高:179
+姓名:Rose 年龄:21 身高:175
+姓名:fang 年龄:22 身高:190
+姓名:bao 年龄:22 身高:184
+姓名:Jack 年龄:22 身高:174
+
+-------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

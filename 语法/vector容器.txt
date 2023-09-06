@@ -1,0 +1,136 @@
+vector容器。
+1.vector容器基本概念。
+1)功能：
+vector的容器数据结构与数组非常相似，也成为单端数组。
+
+2）vector容器与普通数组的区别？
+普通数组  -> 静态空间。  int a[5];
+vector容器  ->  动态扩展  
+
+3）动态扩展。
+并不是在原空间之后继续接新空间，而是找更大的内存空间，然后原数据拷贝到新空间中释放原空间
+
+4）迭代器
+vector容器的迭代器是随机访问迭代器
+
+2.测试vector容器中所涉及到的函数接口
+构造函数、 赋值操作 、 容量和大小、 插入与删除、 数据的存取、 互换容器、 预留空间
+
+#include <iostream>
+using namespace std;
+#include <vector>
+
+/*vector容器的函数接口*/
+
+//构造函数、 赋值操作 、 容量和大小、 插入与删除、 数据的存取、 互换容器、 预留空间
+
+void printVector(vector<int>& v)
+{
+	for (vector<int>::iterator it = v.begin(); it != v.end(); it++)
+	{
+		cout << *it << " ";
+	}
+	cout << endl;
+}
+
+ 
+int main()
+{
+	//vector<int> v1;
+
+	//v1.push_back(10);
+	//v1.push_back(20);
+	//v1.push_back(30);
+
+	//printVector(v1); //10 20 30
+
+	//vector<int> v2(v1.begin(), v1.end());
+	//printVector(v2); //10 20 30
+
+	//vector<int>::iterator it = v1.begin();
+	//it++;
+	//vector<int> v2(it,v1.end());
+	//printVector(v2); //20 30
+
+	vector <int>v3(10,100);
+	printVector(v3);
+
+	vector<int> v4(v3);
+	printVector(v4);
+
+	vector<int> v5;
+	v5 = v4;
+	printVector(v5);
+
+	vector<int> v6;
+	v6.assign(v5.begin(),v5.end());
+	printVector(v6);
+
+	vector<int> v7;
+	v7.assign(10,5);
+	printVector(v7);
+
+	if (v7.empty())
+	{
+		cout << "v7为空" << endl;
+	}
+	else {
+		cout << "v7不为空" << endl;
+		cout << "v7的容量" << v7.capacity() << endl;
+		cout << "v7的大小" << v7.size() << endl;
+	}
+
+	v7.resize(15,7);
+	printVector(v7);
+
+	v7.insert(v7.begin(),10);
+	printVector(v7);
+
+	v7.erase(v7.begin());
+	printVector(v7);
+	/*
+	v7.clear();
+	printVector(v7);*/
+
+	cout << v7.at(0) << endl;
+	cout << v7.at(10) << endl;
+
+	cout << v7[0] << endl;
+	cout << v7[10] << endl;
+
+	cout << v7.front() << endl;
+	cout << v7.back() << endl;
+
+	cout << "交换前" << endl;
+	printVector(v3);
+	printVector(v7);
+
+	v7.swap(v3);
+
+	cout << "交换后" << endl;
+	printVector(v3);
+	printVector(v7);
+
+	cout << "---------------------------------" << endl;
+	vector<int> v8;
+	v8.reserve(100000);	//容器预留长度
+
+	int i;
+	int num = 0;
+	int* p = NULL;
+	for (i = 0; i < 100000; i++)
+	{
+		v8.push_back(i);
+
+		//如果不相等，说明扩容了一次
+		if (p != &v8[0])
+		{
+			p = &v8[0];
+			num++;
+		}
+	}
+
+	cout << "num = " << num << endl;
+
+	return 0;
+}

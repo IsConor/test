@@ -1,0 +1,39 @@
+stack容器
+
+stack是一种先进后出的数据结构，它只有一个出口，叫栈顶。
+找只有顶端才会被外界使用，因此栈不允许有遍历行为。
+
+#include <iostream>
+using namespace std;
+#include <stack>
+
+
+int main()
+{
+	stack <int>s;
+
+	s.push(10);	//压栈
+	s.push(20);
+	s.push(30);
+
+	cout << "栈的大小" << s.size() << endl; // size();  栈元素的个数
+
+	stack <int>s2(s); //拷贝构造
+	cout << "s2栈的大小" << s2.size() << endl;
+
+	stack <int>s3;	// = 号赋值
+	s3 = s2;
+	cout << "s3栈的大小" << s3.size() << endl;
+
+	//只要栈不为空，那么就查看栈顶元素，并执行出栈的操作
+	while ( !s.empty())
+	{
+		//查看栈顶的元素
+		cout << "栈顶元素" << s.top() << endl;	//s.top(); 栈顶
+
+		//出栈
+		s.pop();		//s.pop();   出栈
+	}
+
+	return 0;
+}
